@@ -20,6 +20,9 @@ public class Lab4 {
             con = DriverManager.getConnection(dbAddress + userPass);
             Statement s = con.createStatement();
             int myResult = s.executeUpdate("CREATE DATABASE IF NOT EXISTS " + dbName);
+
+            System.out.println(" createDatabase function: Database created \n");
+
       }
       catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
@@ -35,6 +38,9 @@ public class Lab4 {
       try {
          Class.forName(jdbcDriver);
          con = DriverManager.getConnection(dbAddress + dbName, userName, password);
+
+          System.out.println(" main function: connectrion created \n");
+
       }
       catch (ClassNotFoundException e) {
          e.printStackTrace();
