@@ -1,38 +1,47 @@
+// import java.sql.Connection;
+import java.sql.*;
 import java.util.Scanner;
 
 public class Lab4 {
 
-    public static void main(String[] args) {
-        System.out.println(" Welcome to Java Calculator v0.1 \n");
-        Scanner scanner = new Scanner(System.in);
+   static final String jdbcDriver = "com.mysql.jdbc.Driver";
+   static final String dbAddress = "jdbc:mysql://10.0.10.3:3306/";
+   static final String userPass = "?user=root&password=qwerty123";
+   static final String dbName = "Lab4";
+   static final String userName = "root";
+   static final String password = "qwerty123";
 
-        System.out.println("\n Please enter two numbers");
-        System.out.print("\n First number: ");
-        int firstNumber = scanner.nextInt();
-        System.out.print("\n Second number: ");
-        int secondNumber = scanner.nextInt();
-        System.out.println("\n Select between (*,/,+,-)\n Type out the character in a single letter: ");
+   static Connection con;
+
+   static void createDatabase() {
+
+      try {
+            Class.forName(jdbcDriver);
+            con = DriverManager.getConnection(dbAddress + userPass);
+            Statement s = con.createStatement();
+            int myResult = s.executeUpdate("CREATE DATABASE IF NOT EXISTS " + dbName);
+      }
+      catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+      }
+   }
+
+   public static void main(String[] args) {
+
+      System.out.println(" Welcome to test\n");
+        Scanner scanner = new Scanner(System.in);
         String operation = scanner.next();
 
-        String eo = "You have selected ";
-
-        switch (operation) {
-        case "*":
-            System.out.println(eo + "* \n Your Result: "+ ( firstNumber * secondNumber ));
-            break;
-        case "/":
-            System.out.println(eo + "/ \n Your Result: "+ ( firstNumber / secondNumber ));
-            break;
-        case "+":
-            System.out.println(eo + "+ \n Your Result: "+ ( firstNumber + secondNumber ));
-            break;
-        case "-":
-            System.out.println(eo + "- \n Your Result: "+ ( firstNumber - secondNumber ));
-            break;
-        default: System.out.println("\n Please select a valid character");
-        }
-
-        scanner.close();
-        System.out.println(" Closing Application ");
-    }
+      try {
+         Class.forName(jdbcDriver);
+         con = DriverManager.getConnection(dbAddress + dbName, userName, password);
+      }
+      catch (ClassNotFoundException e) {
+         e.printStackTrace();
+      }
+      catch (SQLException e) {
+         createDatabase();
+         // e.printStackTrace();
+      }
+   }
 }
