@@ -10,7 +10,7 @@ public class Lab4 {
    static final String dbName = "Lab4";
    static final String userName = "AW";
    static final String password = "qwerty123";
-   static final String nazwa_tabeli = "employees";
+   static final String tableName = "employees";
    static Connection conn;
    static Statement st;
 
@@ -29,29 +29,29 @@ public class Lab4 {
 
    public static void main(String[] args) {
 
-      System.out.println(" Welcome to test\n");
+      System.out.println("\n Welcome to app\n");
         Scanner scan = new Scanner(System.in);
         scan.next();
-
-
+      System.out.println("\n Welcome to app\n");
 
       try {
          Class.forName(jdbcDriver);
          conn = DriverManager.getConnection(dbAddress + dbName, userName, password);
-                   System.out.println(" main function: connectrion created \n");
+
+          System.out.println("\n main function: connection created \n");
 
             st = conn.createStatement();
-
+          System.out.println("\n main function: statement created \n");
 
             //Utworzenie bazy danych
             st.executeUpdate("CREATE DATABASE IF NOT EXISTS " + dbName);
             //Przejście do tej bazy
             st.executeUpdate("USE "+ dbName);
-              String new_table = "CREATE TABLE IF NOT EXISTS " + nazwa_tabeli + " ("
+              String new_table = "CREATE TABLE IF NOT EXISTS " + tableName + " ("
                                 + "ID INT(4) NOT NULL AUTO_INCREMENT,"
                                 + "NAME VARCHAR(30),"
                                 + "SURNAME VARCHAR(30),"
-                                + "PESEL VARCHAR(11),"
+                                + "SALARY DOUBLE(11),"
                                 + "PRIMARY KEY (ID))";
 
             //Utworzenie tabeli
@@ -61,45 +61,36 @@ public class Lab4 {
 
         boolean execute=true;
         while(execute){
-                    System.out.println("\n\n\nMENU GLOWNE");
-                    System.out.println("1: Wyswietl zawartosc tabeli.");
-                    System.out.println("2. Dodaj do tabeli:");
-                    System.out.println("3. Usun z tabeli:");
-                    System.out.println("4. Edytuj dane z tabeli:");
-                    System.out.println("0. Wyjscie");
+                    System.out.println("\n\n\n Menu");
+                    System.out.println("1: Display table.");
+                    System.out.println("2. Add to table:");
+                    System.out.println("3. Remove from table:");
+                    System.out.println("4. Edit data in table:");
+                    System.out.println("0. Exit");
 
-                    System.out.println("Wybierz opcje: ");
+                    System.out.println("Choose one of the options above: ");
                     int selection;
                     selection = scan.nextInt();
 
                                 switch(selection) {
-                                    case 1: { //WYświetlenie zawartości tabeli
+                                    case 1: {
 
-                                        String query = "SELECT * FROM " + nazwa_tabeli;
+                                        String query = "SELECT * FROM " + tableName;
                                         ResultSet rs =  st.executeQuery(query);
-                                        System.out.println("\n\nID | NAME | SURNAME | PESEL");
+                                        System.out.println("\n\nID | NAME | SURNAME | SALARY");
 
                                       while(rs.next()) {
                                          int id = rs.getInt("id");
                                          String name = rs.getString("Name");
                                          String surname = rs.getString("Surname");
-                                          String pesel = rs.getString("pesel");
+                                          String salary = rs.getString("Salary");
 
-                                      System.out.println(id + " | " + name + " | " + surname + " | " + pesel);
+                                      System.out.println(id + " | " + name + " | " + surname + " | " + salary);
                                      }
 
                                         break;
                                     }
-                                    case 2: { //Dodanie rekordów do tabeli (ograniczone maksimum)
-
-                                        System.out.println("\nIle rekordow chcesz dodac (od 1 do 10)");
-                                        int count = scan.nextInt();
-
-                                        if(count > 10 || count == 0){
-                                            System.out.println("\nNiepoprawna wartość. Wpisz liczbę z zakresu od 1 do 10: ");
-                                            count = scan.nextInt();
-                                        }
-                                        while(count > 0){
+                                    case 2: {
 
                                              try
                                              {
@@ -110,50 +101,46 @@ public class Lab4 {
                                                   System.out.println(e);
                                                }
 
-
-                                        System.out.println("Podaj imie: ");
+                                        System.out.println("Write name: ");
                                         String name = scan.next();
 
-                                        System.out.println("Podaj nazwisko: ");
+                                        System.out.println("Write surname: ");
                                         String surname = scan.next();
 
-                                        System.out.println("Podaj pesel: ");
-                                        String pesel = scan.next();
+                                        System.out.println("Write salary value: ");
+                                        String salary = scan.next();
 
-                                        String query = "INSERT INTO " + nazwa_tabeli + " ( NAME, SURNAME, PESEL) VALUES (?, ?, ?)";
+                                        String query = "INSERT INTO " + tableName + " ( NAME, SURNAME, SALARY) VALUES (?, ?, ?)";
                                         PreparedStatement prpStmt = conn.prepareStatement(query);
 
                                         prpStmt.setString(1, name);
                                         prpStmt.setString(2, surname);
-                                        prpStmt.setString(3, pesel);
+                                        prpStmt.setString(3, salary);
 
                                         prpStmt.execute();
 
-                                        System.out.println("\nDodano rekord.\n");
+                                        System.out.println("\nPostition added.\n");
 
-                                        count--;
-
-                                        }
                                         break;
                                     }
                                     case 3: { //Usunięcie rekordu o zadanym ID
-                                        System.out.println("\nWybierz rekord do usuniecia: ");
+                                        System.out.println("\nSelect row to remove: ");
                                         int id = scan.nextInt();
 
 
-                                        String query = "DELETE FROM " + nazwa_tabeli + " WHERE ID = ?";
+                                        String query = "DELETE FROM " + tableName + " WHERE ID = ?";
                                         PreparedStatement prpStmt = conn.prepareStatement(query);
 
                                         prpStmt.setInt(1, id);
 
                                         prpStmt.execute();
 
-                                        System.out.println("Usunięto rekord.");
+                                        System.out.println("Record "+id+" removed.");
                                         break;
                                     }
                                     case 4: {
 
-                                        String query = "SELECT * FROM " + nazwa_tabeli;
+                                        String query = "SELECT * FROM " + tableName;
                                         ResultSet rs =  st.executeQuery(query);
                                         System.out.println("\n\nID | NAME | SURNAME | PESEL");
 
@@ -167,13 +154,13 @@ public class Lab4 {
                                      }
 
 
-                                        System.out.println("\nWybierz rekord do edytowania: ");
+                                        System.out.println("\nSelect row to edit: ");
 
                                          String id = scan.next();
-                                         System.out.println("\nWybierz kolumne do edytowania: ");
+                                         System.out.println("\nSelect column name to edit: ");
                                          String column = scan.next();
 
-                                          System.out.println("\nWpisz nowa wartosc: ");
+                                          System.out.println("\nWrite new value: ");
                                          String edit_value = scan.next();
 
                                          String query_update = " UPDATE ? SET  ? = WHERE ID = ?";
@@ -185,7 +172,7 @@ public class Lab4 {
 
                                          prpStmt.execute();
 
-                                        System.out.println("Edytowano rekord.");
+                                        System.out.println("Row edited.");
 
                                         break;
                                     }
@@ -209,8 +196,8 @@ public class Lab4 {
       }
       catch (SQLException e) {
          createDatabase();
-         // e.printStackTrace();
+         e.printStackTrace();
       }
-     System.out.println("Koniec dzialania programu");
+     System.out.println("Program's work finished");
    }
 }
