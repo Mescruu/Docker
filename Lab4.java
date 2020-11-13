@@ -29,19 +29,19 @@ public class Lab4 {
 
    public static void main(String[] args) {
 
-      System.out.println("\n Welcome to app\n");
+      System.out.println("\n Welcome to program\n");
         Scanner scan = new Scanner(System.in);
         scan.next();
-      System.out.println("\n Welcome to app\n");
+
+
 
       try {
          Class.forName(jdbcDriver);
          conn = DriverManager.getConnection(dbAddress + dbName, userName, password);
-
-          System.out.println("\n main function: connection created \n");
+                   System.out.println("\n main function: connectrion created \n");
 
             st = conn.createStatement();
-          System.out.println("\n main function: statement created \n");
+
 
             //Utworzenie bazy danych
             st.executeUpdate("CREATE DATABASE IF NOT EXISTS " + dbName);
@@ -51,7 +51,7 @@ public class Lab4 {
                                 + "ID INT(4) NOT NULL AUTO_INCREMENT,"
                                 + "NAME VARCHAR(30),"
                                 + "SURNAME VARCHAR(30),"
-                                + "SALARY DOUBLE(11),"
+                                + "DEPARTMENT VARCHAR(11),"
                                 + "PRIMARY KEY (ID))";
 
             //Utworzenie tabeli
@@ -61,70 +61,62 @@ public class Lab4 {
 
         boolean execute=true;
         while(execute){
-                    System.out.println("\n\n\n Menu");
-                    System.out.println("1: Display table.");
-                    System.out.println("2. Add to table:");
-                    System.out.println("3. Remove from table:");
-                    System.out.println("4. Edit data in table:");
-                    System.out.println("0. Exit");
+                    System.out.println("1: Wyswietl tabele.");
+                    System.out.println("2. Dodaj rekord do tabeli:");
+                    System.out.println("3. Usun rekord z tabeli:");
+                    System.out.println("4. Edytuj dane w tabeli:");
+                    System.out.println("0. Zakoncz dzialanie programu");
 
-                    System.out.println("Choose one of the options above: ");
+                    System.out.println("Wpisz numer opcji: ");
                     int selection;
                     selection = scan.nextInt();
 
                                 switch(selection) {
-                                    case 1: {
+                                    case 1: { //WYświetlenie zawartości tabeli
 
                                         String query = "SELECT * FROM " + tableName;
                                         ResultSet rs =  st.executeQuery(query);
-                                        System.out.println("\n\nID | NAME | SURNAME | SALARY");
+                                        System.out.println("\n1 \t|\t 2 \t|\t 3 \t\t|\t 4");
+                                        System.out.println("\nID \t|\t NAME \t|\t SURNAME \t|\t DEPARTMENT");
 
                                       while(rs.next()) {
                                          int id = rs.getInt("id");
                                          String name = rs.getString("Name");
                                          String surname = rs.getString("Surname");
-                                          String salary = rs.getString("Salary");
+                                          String department = rs.getString("Department");
 
-                                      System.out.println(id + " | " + name + " | " + surname + " | " + salary);
+                                      System.out.println(id + " \t|\t " + name + " \t|\t " + surname + " \t|\t " + department);
                                      }
 
                                         break;
                                     }
-                                    case 2: {
+                                    case 2: { //Dodanie rekordów do tabeli (ograniczone maksimum)
 
-                                             try
-                                             {
-                                                   Thread.sleep(1000);
-                                              }
-                                              catch(Exception e)
-                                              {
-                                                  System.out.println(e);
-                                               }
-
-                                        System.out.println("Write name: ");
+                                        System.out.println("Podaj imie: ");
                                         String name = scan.next();
 
-                                        System.out.println("Write surname: ");
+                                        System.out.println("Podaj nazwisko: ");
                                         String surname = scan.next();
 
-                                        System.out.println("Write salary value: ");
-                                        String salary = scan.next();
+                                        System.out.println("Podaj dzial: ");
+                                        String department = scan.next();
 
-                                        String query = "INSERT INTO " + tableName + " ( NAME, SURNAME, SALARY) VALUES (?, ?, ?)";
+                                        String query = "INSERT INTO " + tableName + " ( NAME, SURNAME, DEPARTMENT) VALUES (?, ?, ?)";
                                         PreparedStatement prpStmt = conn.prepareStatement(query);
 
                                         prpStmt.setString(1, name);
                                         prpStmt.setString(2, surname);
-                                        prpStmt.setString(3, salary);
+                                        prpStmt.setString(3, department);
 
                                         prpStmt.execute();
 
-                                        System.out.println("\nPostition added.\n");
+                                        System.out.println("\nRekord zostal dodany.\n");
+
 
                                         break;
                                     }
                                     case 3: { //Usunięcie rekordu o zadanym ID
-                                        System.out.println("\nSelect row to remove: ");
+                                        System.out.println("\nWybierz rekord do usuniecia: ");
                                         int id = scan.nextInt();
 
 
@@ -135,35 +127,36 @@ public class Lab4 {
 
                                         prpStmt.execute();
 
-                                        System.out.println("Record "+id+" removed.");
+                                        System.out.println("Rekord zostal usuniety.");
                                         break;
                                     }
                                     case 4: {
 
                                         String query = "SELECT * FROM " + tableName;
                                         ResultSet rs =  st.executeQuery(query);
-                                        System.out.println("\n\nID | NAME | SURNAME | PESEL");
+                                        System.out.println("\n1 \t|\t 2 \t|\t 3 \t\t|\t 4");
+                                        System.out.println("\nID \t|\t NAME \t|\t SURNAME \t|\t DEPARTMENT");
 
                                       while(rs.next()) {
                                          int id = rs.getInt("id");
                                          String name = rs.getString("Name");
                                          String surname = rs.getString("Surname");
-                                          String pesel = rs.getString("pesel");
+                                          String department = rs.getString("Department");
 
-                                      System.out.println(id + " | " + name + " | " + surname + " | " + pesel);
+                                      System.out.println(id + " \t|\t " + name + " \t|\t " + surname + " \t|\t " + department);
                                      }
 
 
-                                        System.out.println("\nSelect row to edit: ");
+                                        System.out.println("\nWybierz ID rekordu do edycji: ");
 
                                          String id = scan.next();
-                                         System.out.println("\nSelect column name to edit: ");
+                                         System.out.println("\nWybierz nuemr kolumny do edycji: ");
                                          String column = scan.next();
 
-                                          System.out.println("\nWrite new value: ");
+                                          System.out.println("\nWpisz nowa wartosc: ");
                                          String edit_value = scan.next();
 
-                                         String query_update = " UPDATE ? SET  ? = WHERE ID = ?";
+                                         String query_update = " UPDATE " + tableName + " SET  ? = ? WHERE ID = ?";
                                          PreparedStatement prpStmt = conn.prepareStatement(query_update);
 
                                         prpStmt.setString(1, column);
@@ -172,7 +165,7 @@ public class Lab4 {
 
                                          prpStmt.execute();
 
-                                        System.out.println("Row edited.");
+                                        System.out.println("Rekord zostal edytowany.");
 
                                         break;
                                     }
@@ -187,7 +180,6 @@ public class Lab4 {
                                                   System.out.println(e);
                                                }
                                    execute=false;
-
                                 }
         }
       }
@@ -196,8 +188,8 @@ public class Lab4 {
       }
       catch (SQLException e) {
          createDatabase();
-         e.printStackTrace();
+         // e.printStackTrace();
       }
-     System.out.println("Program's work finished");
+     System.out.println("Koniec dzialania programu");
    }
 }
