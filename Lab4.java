@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Lab4 {
 
-   static final String jdbcDriver = "com.mysql.jdbc.Driver";
+   static final String jdbcDriver = "com.mysql.cj.jdbc.Driver";
    static final String dbAddress = "jdbc:mysql://10.0.10.3:3306/";
    static final String userPass = "?user=root&password=qwerty123";
    static final String dbName = "Lab4";
@@ -29,7 +29,6 @@ public class Lab4 {
 
    public static void main(String[] args) {
 
-      System.out.println("\n Welcome to program\n");
         Scanner scan = new Scanner(System.in);
         scan.next();
 
@@ -38,7 +37,13 @@ public class Lab4 {
       try {
          Class.forName(jdbcDriver);
          conn = DriverManager.getConnection(dbAddress + dbName, userName, password);
-                   System.out.println("\n main function: connectrion created \n");
+
+          System.out.println("\n=========================================================");
+          System.out.println("\n===================BAZA PRACOWNIKOW======================");
+          System.out.println("\n======================ALBERT WOS=========================");
+          System.out.println("\n=========================================================");
+
+          System.out.println("\nPolaczenie z baza utworzone \n");
 
             st = conn.createStatement();
 
@@ -57,17 +62,18 @@ public class Lab4 {
             //Utworzenie tabeli
             st.executeUpdate(new_table);
 
-            System.out.println ("\nDatabase Connection Established...");
+            System.out.println ("Polaczenie z bazą danych nawiazane\n");
 
         boolean execute=true;
         while(execute){
-                    System.out.println("1: Wyswietl tabele.");
-                    System.out.println("2. Dodaj rekord do tabeli:");
-                    System.out.println("3. Usun rekord z tabeli:");
-                    System.out.println("4. Edytuj dane w tabeli:");
+                    System.out.println("\n==========================================================");
+                    System.out.println("1. Wyswietl tabele");
+                    System.out.println("2. Dodaj rekord do tabeli");
+                    System.out.println("3. Usun rekord z tabeli");
+                    System.out.println("4. Edytuj dane w tabeli");
                     System.out.println("0. Zakoncz dzialanie programu");
 
-                    System.out.println("Wpisz numer opcji: ");
+                    System.out.println("\nWpisz numer opcji: ");
                     int selection;
                     selection = scan.nextInt();
 
@@ -76,8 +82,10 @@ public class Lab4 {
 
                                         String query = "SELECT * FROM " + tableName;
                                         ResultSet rs =  st.executeQuery(query);
+                                        System.out.println("|--------------------------------------------------------------------|");
                                         System.out.println("\n1 \t|\t 2 \t|\t 3 \t\t|\t 4");
-                                        System.out.println("\nID \t|\t NAME \t|\t SURNAME \t|\t DEPARTMENT");
+                                        System.out.println("ID \t|\t NAME \t|\t SURNAME \t|\t DEPARTMENT\n");
+                                        System.out.println("|--------------------------------------------------------------------|\n");
 
                                       while(rs.next()) {
                                          int id = rs.getInt("id");
@@ -131,11 +139,14 @@ public class Lab4 {
                                         break;
                                     }
                                     case 4: {
+                                        int row_count = 0;
 
                                         String query = "SELECT * FROM " + tableName;
                                         ResultSet rs =  st.executeQuery(query);
+                                        System.out.println("|--------------------------------------------------------------------|");
                                         System.out.println("\n1 \t|\t 2 \t|\t 3 \t\t|\t 4");
-                                        System.out.println("\nID \t|\t NAME \t|\t SURNAME \t|\t DEPARTMENT");
+                                        System.out.println("ID \t|\t NAME \t|\t SURNAME \t|\t DEPARTMENT\n");
+                                        System.out.println("|--------------------------------------------------------------------|\n");
 
                                       while(rs.next()) {
                                          int id = rs.getInt("id");
@@ -144,26 +155,66 @@ public class Lab4 {
                                           String department = rs.getString("Department");
 
                                       System.out.println(id + " \t|\t " + name + " \t|\t " + surname + " \t|\t " + department);
+                                     row_count++;
                                      }
 
 
-                                        System.out.println("\nWybierz ID rekordu do edycji: ");
+                                        System.out.println("\nWybierz ID rekordu do edycji:  ( 0 - by powrocic)");
 
-                                         String id = scan.next();
-                                         System.out.println("\nWybierz nuemr kolumny do edycji: ");
-                                         String column = scan.next();
+                                        int id = scan.nextInt();
 
-                                          System.out.println("\nWpisz nowa wartosc: ");
+                                         if(id ==0 )
+                                         break;
+
+                                        if(id>row_count){
+                                         System.out.println("\nNieprawidłowe ID\n");
+                                         break;
+                                        }
+
+                                         System.out.println("\nWpisz numer kolumny do edycji: ");
+                                         int columnNumber = scan.nextInt();
+                                         String columnName = "";
+
+                                          switch(columnNumber) {
+                                            case 1: {
+                                             System.out.println("\nNie można zmienić ID wiersza\n");
+                                            break;
+                                            }
+                                             case 2: {
+                                             columnName = "NAME";
+                                            break;
+                                            }
+                                            case 3: {
+                                             columnName = "SURNAME";
+
+                                            break;
+                                            }
+                                           case 4: {
+                                             columnName = "DEPARTMENT";
+                                            break;
+                                            }
+                                            default:
+                                            System.out.println("\nNie poprawny numer kolumny\n");
+                                            columnNumber = 0;
+                                            break;
+                                            }
+
+                                         if(columnNumber ==0 )
+                                         break;
+
+                                         System.out.println("\nWpisz nowa wartosc: ");
                                          String edit_value = scan.next();
 
-                                         String query_update = " UPDATE " + tableName + " SET  ? = ? WHERE ID = ?";
+
+                                         String query_update = " UPDATE " + tableName
+                                                             + " SET "+columnName
+                                                             +" = ? WHERE ID = ?;";
+
                                          PreparedStatement prpStmt = conn.prepareStatement(query_update);
 
-                                        prpStmt.setString(1, column);
-                                        prpStmt.setString(2, edit_value);
-                                        prpStmt.setString(3, id);
-
-                                         prpStmt.execute();
+                                        prpStmt.setString(1, edit_value);
+                                        prpStmt.setInt(2, id);
+                                        prpStmt.execute();
 
                                         System.out.println("Rekord zostal edytowany.");
 
@@ -188,7 +239,7 @@ public class Lab4 {
       }
       catch (SQLException e) {
          createDatabase();
-         // e.printStackTrace();
+          e.printStackTrace();
       }
      System.out.println("Koniec dzialania programu");
    }
